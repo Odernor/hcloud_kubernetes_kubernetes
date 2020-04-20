@@ -103,6 +103,5 @@ runcmd:
   - systemctl daemon-reload
   - kubeadm init --token ${kubernetes_token} --token-ttl 1h --pod-network-cidr=10.244.0.0/16 --kubernetes-version=${kubernetes_version} --ignore-preflight-errors=NumCPU --apiserver-cert-extra-sans=${kubernetes_master_ip}
   - sh /run/kubernetes_init.sh
-  - rm -f /run/kubernetes_init.sh
 
 
