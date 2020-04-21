@@ -98,9 +98,15 @@ resource "local_file" "waitscript" {
   content  = data.template_file.waitscript.rendered
 }
 
+esource "null_resource" "waitscript" {
+  provisioner "local-exec" {
+    command = "perl ${local.random_waitscript}"
+  }
+}
+
 resource "null_resource" "copykubeconf" {
   provisioner "local-exec" {
     command = "scp -o \"StrictHostKeyChecking=no\" root@${hcloud_server.kubernetes_master.ipv4_address}:/etc/kubernetes/admin.conf ~/.kube/config_hetzner"
   }
-  depends_on = [local_file.waitscript]
+  depends_on = [null_resource.waitscript]
 }
