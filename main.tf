@@ -72,14 +72,13 @@ data "template_file" "waitscript" {
   template = <<EOT
 #!/usr/bin/perl
       
-      my $sIP = $ARGV[0];
-      exit 0 if !$sIP;
       my $iCode=1;
       my $sResult;
       
       my $sCommand = "curl -s --insecure https://$${kubernetes_master_ip}:6443/";
       
       while($iCode) {
+        print "WAITING for Kubernetes Master is READY!\n";
         $sResult = system($sCommand);
         $iCode = $?;
         sleep(10);
@@ -102,6 +101,7 @@ resource "null_resource" "waitscript" {
   provisioner "local-exec" {
     command = "perl ${local.random_waitscript}"
   }
+  depends_on = [local_file.waitscript]
 }
 
 resource "null_resource" "copykubeconf" {
