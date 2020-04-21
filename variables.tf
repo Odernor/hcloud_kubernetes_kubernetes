@@ -11,3 +11,4 @@ variable "kubernetes_master_internal_ip" {}
 
 variable "kubernetes_node_server_type" {}
 variable "kubernetes_node_count" {}
+variable "kube_config" {}

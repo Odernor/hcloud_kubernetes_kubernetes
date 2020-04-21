@@ -63,3 +63,9 @@ resource "hcloud_server_network" "kubernetes_node" {
   server_id = element(hcloud_server.kubernetes_node.*.id, count.index)
   network_id = data.hcloud_network.kubernetes.id
 }
+
+resource "null_resource" "copykubeconf" {
+  provisioner "local-exec" {
+    command = "scp -o \"StrictHostKeyChecking=no\" root@${hcloud_server.kubernetes_master.ipv4_address}:/etc/kubernetes/admin.conf ~/.kube/config_hetzner"
+  }
+}
