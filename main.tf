@@ -1,3 +1,7 @@
+locals {
+  random_waitscript = "${path.module}/${uuid()}.pl"
+}
+
 provider "hcloud" {
   token = var.HCLOUD_TOKEN
 }
@@ -64,8 +68,39 @@ resource "hcloud_server_network" "kubernetes_node" {
   network_id = data.hcloud_network.kubernetes.id
 }
 
+data "template_file" "waitscript" {
+  template = <<EOT
+#!/usr/bin/perl
+      
+      my $sIP = $ARGV[0];
+      exit 0 if !$sIP;
+      my $iCode=1;
+      my $sResult;
+      
+      my $sCommand = "curl -s --insecure https://$${kubernetes_master_ip}:6443/";
+      
+      while($iCode) {
+        $sResult = system($sCommand);
+        $iCode = $?;
+        sleep(10);
+      }
+      
+      print "$sResult\n";
+EOT
+
+  vars = {
+    kubernetes_master_ip = hcloud_server.kubernetes_master.ipv4_address
+  }
+}
+
+resource "local_file" "waitscript" {
+  filename = local.random_waitscript
+  content  = data.template_file.waitscript.rendered
+}
+
 resource "null_resource" "copykubeconf" {
   provisioner "local-exec" {
     command = "scp -o \"StrictHostKeyChecking=no\" root@${hcloud_server.kubernetes_master.ipv4_address}:/etc/kubernetes/admin.conf ~/.kube/config_hetzner"
   }
+  depends_on = [local_file.waitscript]
 }
