@@ -102,6 +102,10 @@ resource "null_resource" "waitscript" {
     command = "perl ${local.random_waitscript}"
   }
   depends_on = [local_file.waitscript]
+
+  triggers = {
+    kubernetes_id = hcloud_server.kubernetes_master.id
+  }
 }
 
 resource "null_resource" "copykubeconf" {
