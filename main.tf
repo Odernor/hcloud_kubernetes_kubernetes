@@ -98,7 +98,7 @@ resource "local_file" "waitscript" {
   content  = data.template_file.waitscript.rendered
 }
 
-esource "null_resource" "waitscript" {
+resource "null_resource" "waitscript" {
   provisioner "local-exec" {
     command = "perl ${local.random_waitscript}"
   }
