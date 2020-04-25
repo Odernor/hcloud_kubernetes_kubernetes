@@ -93,11 +93,11 @@ write_files:
         namespace: fip-controller
       data:
         config.json: |
-        {
-        "hcloudFloatingIPs": [ "${floating_ip}" ],
-        "nodeAddressType": "external"
-        }
-        ---
+          {
+            "hcloudFloatingIPs": [ "${floating_ip}" ],
+            "nodeAddressType": "external"
+          }
+      ---
       apiVersion: v1
       kind: Secret
       metadata:
