@@ -62,4 +62,5 @@ runcmd:
   - perl /run/wait_for_master_ready.pl ${kubernetes_master_ip}
   - kubeadm join ${kubernetes_master_ip}:6443 --token ${kubernetes_token} --discovery-token-unsafe-skip-ca-verification
   - rm -f /run/wait_for_master_ready.pl
+  - /sbin/ifup eth0:1
   

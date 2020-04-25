@@ -25,6 +25,8 @@ write_files:
   - content: |
       #!/bin/bash
 
+      /sbin/ifup eth0:1
+
       export KUBECONFIG=/etc/kubernetes/admin.conf
 
       cat <<EOF | kubectl apply -f -
