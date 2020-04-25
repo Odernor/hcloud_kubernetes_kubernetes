@@ -94,8 +94,7 @@ write_files:
       data:
         config.json: |
           {
-            "hcloudFloatingIPs": [ "${floating_ip}" ],
-            "nodeAddressType": "external"
+            "hcloud_floating_ips": [ "${floating_ip}" ]
           }
       ---
       apiVersion: v1
@@ -103,7 +102,7 @@ write_files:
       metadata:
         name: fip-controller-secrets
         namespace: fip-controller
-        stringData:
+      stringData:
         HCLOUD_API_TOKEN: ${hcloud_token}
       EOF
       
