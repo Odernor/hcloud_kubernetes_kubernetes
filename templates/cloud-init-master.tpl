@@ -80,6 +80,32 @@ write_files:
             addresses:
             - ${floating_ip}/32
       EOF
+
+      kubectl create namespace fip-controller
+      kubectl apply -f https://raw.githubusercontent.com/cbeneke/hcloud-fip-controller/master/deploy/rbac.yaml
+      kubectl apply -f https://raw.githubusercontent.com/cbeneke/hcloud-fip-controller/master/deploy/deployment.yaml
+
+      cat <<EOF | kubectl apply -f -
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: fip-controller-config
+        namespace: fip-controller
+      data:
+        config.json: |
+        {
+        "hcloudFloatingIPs": [ "${floating_ip}" ],
+        "nodeAddressType": "external"
+        }
+        ---
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: fip-controller-secrets
+        namespace: fip-controller
+        stringData:
+        HCLOUD_API_TOKEN: ${hcloud_token}
+      EOF
       
     path: /run/kubernetes_init.sh
       
